@@ -1,8 +1,9 @@
 import { Typography } from "@mui/material";
-import { Patient } from "../../types";
+import { Diagnosis, Patient } from "../../types";
 import { useEffect, useState } from "react";
 
 import patientService from "../../services/patients";
+import diagnoseService from "../../services/diagnoses"
 import { Male, Female } from "@mui/icons-material";
 
 interface Props {
@@ -11,17 +12,26 @@ interface Props {
 
 const PatientInfoPage = (props: Props) => {
     const [patient, setPatient] = useState<Patient>();
+    const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
 
     useEffect(() => {
         const fetchPatientData = async (id: string) => {
-          const data = await patientService.getPatient(id);
-          setPatient(data);
+            const data = await patientService.getPatient(id);
+            setPatient(data);
         };
+        const fetchDiagnoses = async () => {
+            const data = await diagnoseService.getAll();
+            setDiagnoses(data);
+        };
+
         if(props.id){
             void fetchPatientData(props.id);
         }
+        void fetchDiagnoses();
     }, [props.id]);
 
+
+    console.log(diagnoses);
     return (
         <>
         {!patient ? <Typography fontStyle="italic" fontWeight="bold" align="center" variant="h4">Patient not found</Typography> :
@@ -39,7 +49,7 @@ const PatientInfoPage = (props: Props) => {
                 {
                     entry.diagnosisCodes?.map( (code, key) => 
                         <li key={key}>
-                            <Typography variant="body2">{code}</Typography>
+                            <Typography variant="body2">{code}: {diagnoses.map( diagnosis => diagnosis.code == code? diagnosis.name : null)}</Typography>
                         </li>
                     )
                 }
