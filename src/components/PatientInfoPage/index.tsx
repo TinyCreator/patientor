@@ -24,15 +24,30 @@ const PatientInfoPage = (props: Props) => {
 
     return (
         <>
-        {!patient &&
-            <Typography align="center" variant="h4">Patient not found</Typography>
-        }
-        <div>
+        {!patient ? <Typography fontStyle="italic" fontWeight="bold" align="center" variant="h4">Patient not found</Typography> :
+         <div>
             <br/><br/>
-            <Typography variant="h4">{patient?.name}{patient?.gender == "male" ? <Male/> : <Female/> }</Typography>
-            <Typography variant="body1">SSN: {patient?.ssn}</Typography>
-            <Typography variant="body1">Occupation: {patient?.occupation}</Typography>
+            <Typography variant="h4">{patient.name}{patient.gender == "male" ? <Male/> : <Female/> }</Typography>
+            <Typography variant="body1">SSN: {patient.ssn}</Typography>
+            <Typography variant="body1">Occupation: {patient.occupation}</Typography>
+            <br/><br/>
+            <Typography variant="h5">Entries</Typography>
+            {patient.entries.map( entry => 
+                <div key={entry.id}>
+                <Typography fontStyle="italic" variant="body1">{entry.date}: {entry.description}</Typography>
+                <ul>
+                {
+                    entry.diagnosisCodes?.map( (code, key) => 
+                        <li key={key}>
+                            <Typography variant="body2">{code}</Typography>
+                        </li>
+                    )
+                }
+                </ul>
+                </div>
+            )}
         </div>
+        }
         </>
     );
 };
