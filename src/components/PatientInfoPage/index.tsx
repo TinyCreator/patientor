@@ -1,10 +1,11 @@
 import { Typography } from "@mui/material";
-import { Diagnosis, Patient } from "../../types";
+import { Patient /*,Diagnosis*/ } from "../../types";
 import { useEffect, useState } from "react";
 
 import patientService from "../../services/patients";
-import diagnoseService from "../../services/diagnoses"
+//import diagnoseService from "../../services/diagnoses"
 import { Male, Female } from "@mui/icons-material";
+import EntryDetails from "../EntryDetails/EntryDetails";
 
 interface Props {
     id: string | undefined;
@@ -12,26 +13,25 @@ interface Props {
 
 const PatientInfoPage = (props: Props) => {
     const [patient, setPatient] = useState<Patient>();
-    const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
+    //const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
 
     useEffect(() => {
         const fetchPatientData = async (id: string) => {
             const data = await patientService.getPatient(id);
             setPatient(data);
         };
-        const fetchDiagnoses = async () => {
+
+        /*const fetchDiagnoses = async () => {
             const data = await diagnoseService.getAll();
             setDiagnoses(data);
-        };
-
+        };*/
+        
         if(props.id){
             void fetchPatientData(props.id);
         }
-        void fetchDiagnoses();
+        //void fetchDiagnoses();
     }, [props.id]);
 
-
-    console.log(diagnoses);
     return (
         <>
         {!patient ? <Typography fontStyle="italic" fontWeight="bold" align="center" variant="h4">Patient not found</Typography> :
@@ -44,16 +44,7 @@ const PatientInfoPage = (props: Props) => {
             <Typography variant="h5">Entries</Typography>
             {patient.entries.map( entry => 
                 <div key={entry.id}>
-                <Typography fontStyle="italic" variant="body1">{entry.date}: {entry.description}</Typography>
-                <ul>
-                {
-                    entry.diagnosisCodes?.map( (code, key) => 
-                        <li key={key}>
-                            <Typography variant="body2">{code}: {diagnoses.map( diagnosis => diagnosis.code == code? diagnosis.name : null)}</Typography>
-                        </li>
-                    )
-                }
-                </ul>
+                    <EntryDetails entry={entry}/>
                 </div>
             )}
         </div>
