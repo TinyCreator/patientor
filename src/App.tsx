@@ -24,7 +24,6 @@ const App = () => {
   }, []);
 
   const match = useMatch("/patients/:id");
-
   const patient = patients.find(patient => patient.id === match?.params.id);
   
   return (

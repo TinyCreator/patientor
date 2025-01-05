@@ -70,3 +70,20 @@ export interface Patient {
 }
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
+export type EntryFormValues = Omit<HealthCheckEntry, "id">;
+
+//Reducers types
+export type PatientsState = {
+  patients: Patient[]
+};
+
+export type newPatientsAction = {
+  type: string
+  patient: PatientFormValues
+};
+
+export type newEntryAction = {
+  type: string
+  entry: EntryFormValues
+  id: string
+};
