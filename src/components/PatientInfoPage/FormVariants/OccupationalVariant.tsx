@@ -1,4 +1,4 @@
-import { TextField, Typography } from "@mui/material";
+import { TextField, Typography, Input, InputLabel } from "@mui/material";
 import { SetStateAction } from "react";
 
 interface FormProps {
@@ -15,11 +15,13 @@ const OccupationalVariant = ({setEmployerName, setStartDate, setEndDate}: FormPr
             />
             <br/><br/>
             <Typography variant="h6">Sick Leave</Typography>
-            <TextField fullWidth label="Start Date" variant="standard"
-                onChange={({ target }) => setStartDate(target.value)}
+            <InputLabel style={{ marginTop: 20 }} shrink>Starting Date</InputLabel>
+            <Input type="date" fullWidth
+                onChange={({ target }) => setStartDate(String(target.value))}
             />
-            <TextField fullWidth label="Ending Name" variant="standard"
-                onChange={({ target }) => setEndDate(target.value)}
+            <InputLabel style={{ marginTop: 20 }} shrink>Ending Date</InputLabel>
+            <Input type="date" fullWidth
+                onChange={({ target }) => setEndDate(String(target.value))}
             />
         </>
     );

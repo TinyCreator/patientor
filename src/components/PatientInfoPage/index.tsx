@@ -1,9 +1,9 @@
 import { Alert, Typography } from "@mui/material";
-import { EntryFormValues, Patient /*,Diagnosis*/ } from "../../types";
+import { EntryFormValues, Patient ,Diagnosis } from "../../types";
 import { useEffect, useState } from "react";
 
 import patientService from "../../services/patients";
-//import diagnoseService from "../../services/diagnoses"
+import diagnoseService from "../../services/diagnoses";
 import { Male, Female } from "@mui/icons-material";
 import EntryDetails from "../EntryDetails/EntryDetails";
 import EntryForm from "./EntryForm";
@@ -16,8 +16,7 @@ interface Props {
 const PatientInfoPage = ({id}: Props) => {
     const [patient, setPatient] = useState<Patient>();
     const [error, setError] = useState<string>();
-
-    //const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
+    const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
 
     useEffect(() => {
         const fetchPatientData = async (id: string) => {
@@ -25,17 +24,19 @@ const PatientInfoPage = ({id}: Props) => {
             setPatient(data);
         };        
 
-        /*const fetchDiagnoses = async () => {
+        const fetchDiagnoses = async () => {
             const data = await diagnoseService.getAll();
             setDiagnoses(data);
-        };*/
+        };
         
         if(id){
             void fetchPatientData(id);
         }
-        console.log('ok');
-        //void fetchDiagnoses();
+        
+        void fetchDiagnoses();
     }, [id]);
+
+    const codes = diagnoses.map( diagnosis => diagnosis.code);
 
     const sumbitEntry = async(values: EntryFormValues) => {
         try {
@@ -74,7 +75,9 @@ const PatientInfoPage = ({id}: Props) => {
                     <br/>
                 </>   
             }
-            <EntryForm onSubmit={sumbitEntry} onCancel={() => {}}/>
+            <EntryForm 
+                codes={codes}
+                onSubmit={sumbitEntry} onCancel={() => {}}/>
             <br/>
             <Typography variant="h5">Entries</Typography>
             {patient.entries.map( entry => 

@@ -7,11 +7,12 @@ import OccupationalVariant from "./FormVariants/OccupationalVariant";
 import HospitalVariant from "./FormVariants/HospitalVariant";
 
 interface Props {
+    codes: string[];
     onCancel: () => void;
     onSubmit: (values: EntryFormValues) => void;
 }
 
-const EntryForm = ({ onCancel, onSubmit }: Props) => {
+const EntryForm = ({ codes, onCancel, onSubmit }: Props) => {
     //Common fields for an Entry
     const [description, setDescription] = useState('');
     const [date, setDate] = useState('');
@@ -27,8 +28,9 @@ const EntryForm = ({ onCancel, onSubmit }: Props) => {
     const [dischargeDate, setDischargeDate] = useState('');
     const [criteria, setCriteria] = useState('');
 
+    const addEntry = (event: React.SyntheticEvent) => {
+        event.preventDefault();
 
-    const addEntry = () => {
         const baseEntry = {
             description, date, specialist, diagnosisCodes
         };
@@ -72,10 +74,11 @@ const EntryForm = ({ onCancel, onSubmit }: Props) => {
             <form onSubmit={addEntry}>
                 <br/>
                 <CommonFormFields
+                    codes={codes}
                     setDescription={setDescription}
                     setDate={setDate} 
                     setSpecialist={setSpecialist}
-                    setDiagnosisCodes={setDiagnosisCodes}
+                    setDcodes={setDiagnosisCodes}
                 />
                 { type == "HealthCheck" && 
                     <>
