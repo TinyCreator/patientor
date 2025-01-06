@@ -1,86 +1,112 @@
-import { Box, TextField, Typography, Grid, Button } from "@mui/material";
-import { useState } from "react";
+import { Box, Select, MenuItem, Button, Grid } from "@mui/material";
 import { EntryFormValues } from "../../types";
+import { useState } from "react";
+import HealthCheckVariant from "./FormVariants/HealtCheckVariant";
+import CommonFormFields from "./FormVariants/CommonFormFields";
+import OccupationalVariant from "./FormVariants/OccupationalVariant";
+import HospitalVariant from "./FormVariants/HospitalVariant";
 
 interface Props {
     onCancel: () => void;
     onSubmit: (values: EntryFormValues) => void;
-  }
+}
 
-const EntryForm = ({onCancel, onSubmit }: Props) => {
+const EntryForm = ({ onCancel, onSubmit }: Props) => {
+    //Common fields for an Entry
     const [description, setDescription] = useState('');
     const [date, setDate] = useState('');
     const [specialist, setSpecialist] = useState('');
-    const [healthCheckRating, setHealtCheckRating] = useState(0);
+    const [healthCheckRating, setHealthCheckRating] = useState(0);
     const [diagnosisCodes, setDiagnosisCodes] = useState(['']);
+    const [type, setType] = useState('HealthCheck');
+    //Fields for Occupational Variant
+    const [employerName, setEmployerName] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    //Fields for Hospital Variant
+    const [dischargeDate, setDischargeDate] = useState('');
+    const [criteria, setCriteria] = useState('');
+
 
     const addEntry = () => {
-        onSubmit({
-            description,
-            date,
-            specialist,
-            type: "HealthCheck",
-            healthCheckRating,
-            diagnosisCodes
-        });
-      };
+        const baseEntry = {
+            description, date, specialist, diagnosisCodes
+        };
 
-    return (
+        switch(type){
+            case("HealthCheck"):
+                onSubmit({...baseEntry,
+                    healthCheckRating,
+                    type: "HealthCheck",
+                });
+                break;
+            case("OccupationalHealthcare"):
+                onSubmit({...baseEntry,
+                    employerName,
+                    type: "OccupationalHealthcare",
+                    sickLeave: {
+                        startDate, 
+                        endDate
+                    }
+                });
+                break;
+            case("Hospital"):
+                onSubmit({...baseEntry,
+                    type: "Hospital",
+                    discharge: {
+                        date: dischargeDate,
+                        criteria
+                    }                    
+                });
+                break;
+        }
+    };
+
+    return (        
         <Box sx={{ p: 2, border: '1px dashed grey' }}>
-            <Typography variant="h6">Healthcheck Entry</Typography>
-            <form onSubmit={addEntry}>               
-                <TextField fullWidth 
-                    label="Description"
-                    variant="standard" 
-                    onChange={({ target }) => setDescription(target.value)}
-                />
+            <Select variant="filled" fullWidth value={type} onChange={({ target }) => setType(target.value)}>
+                <MenuItem key="HealthCheck" value="HealthCheck">Health Check</MenuItem>
+                <MenuItem key="Hospital" value="Hospital">Hospital</MenuItem>
+                <MenuItem key="OccupationalHealthcare" value="OccupationalHealthcare">Occupational Healthcare</MenuItem>
+            </Select>
+            <form onSubmit={addEntry}>
                 <br/>
-                <TextField fullWidth
-                    label="Date" 
-                    variant="standard"
-                    onChange={({ target }) => setDate(target.value)}
+                <CommonFormFields
+                    setDescription={setDescription}
+                    setDate={setDate} 
+                    setSpecialist={setSpecialist}
+                    setDiagnosisCodes={setDiagnosisCodes}
                 />
+                { type == "HealthCheck" && 
+                    <>
+                        <HealthCheckVariant setHealthCheckRating={setHealthCheckRating}/>
+                    </>                    
+                }
+                { type == "OccupationalHealthcare" &&
+                    <>
+                        <OccupationalVariant 
+                            setEmployerName={setEmployerName}
+                            setStartDate={setStartDate}
+                            setEndDate={setEndDate}
+                        />
+                    </>
+                }
+                { type == "Hospital" &&
+                    <>
+                        <HospitalVariant 
+                            setDischargeDate={setDischargeDate}
+                            setCriteria={setCriteria}
+                        />
+                    </>
+                }
                 <br/>
-                <TextField fullWidth 
-                    label="Specialist" 
-                    variant="standard"
-                    onChange={({ target }) => setSpecialist(target.value)}
-                />
-                <br/>
-                <TextField fullWidth 
-                    label="Healthcheck Rating"
-                    variant="standard"
-                    onChange={({ target }) => setHealtCheckRating(Number(target.value))}
-                />
-                <br/>
-                <TextField fullWidth
-                    label="Diagnosis Codes"
-                    variant="standard"
-                    onChange={({ target }) => setDiagnosisCodes(target.value.replace('/ /g', '').split(','))}
-                />
-                <br/><br/>
                 <Grid>
+                    <br/>
                     <Grid item>
-                        <Button
-                        color="error"
-                        variant="contained"
-                        style={{ float: "left" }}
-                        type="button"
-                        onClick={onCancel}
-                        >
-                        Cancel
-                        </Button>
+                        <Button color="error" variant="contained" style={{ float: "left" }} type="button" onClick={onCancel}>Cancel</Button>
                     </Grid>
                     <Grid item>
-                        <Button
-                        style={{
-                            float: "right",
-                        }}
-                        type="submit"
-                        variant="contained"
-                        >
-                        Add
-                        </Button>
+                        <Button style={{float: "right"}} type="submit" variant="contained">Add</Button>
                     </Grid>
                 </Grid>
             </form>
